@@ -1,5 +1,5 @@
 ---
-title: "Portfolio Analysis Test"
+title: "Portfolio of 2 Assets"
 author: "Bach Tran"
 date: "2025-04-02"
 output: html_document
@@ -13,7 +13,7 @@ library(quantmod)
 library(ggplot2)
 ```
 
-## Importing SP500 and 3Month Daily T-Bill data on the Secondary Market 
+# Importing SP500 and 3-Month Treasury Bill Secondary Market Rate
 
 ```{r importing data}
 #sp500
@@ -50,7 +50,7 @@ sd(sp500_returns)
 
 ```
 
-## Excess Return and Sharpe Ratio
+# Excess Return and Sharpe Ratio
 
 ```{r sharpe, echo=T}
 # Excess portfolio returns 
@@ -63,7 +63,7 @@ mean(sp500_returns)
 sharpe_ratio <- mean(r_excess) / sd(sp500_returns)
 print(sharpe_ratio)
 ```
-## Annualized mean and volatility as per norm
+# Annualized mean and volatility as per norm
 
 ```{r annualized, echo=T}
 rf_annualized = (1+ rf_weekly_close)^52 -1
@@ -77,8 +77,56 @@ chart.RollingPerformance(R = sp500_returns, width = 12, FUN = "Return.annualized
 chart.RollingPerformance(R = sp500_returns, width = 12, FUN = "StdDev.annualized")
 chart.RollingPerformance(R = sp500_returns, width = 12, FUN = "SharpeRatio.annualized", Rf = Rf)
 ```
-## Returns Histogram: interesting left-skewed instead of the expected right skewed
+# Returns Histogram, Distributions and Risk Analysis: 
 ```{r histogram, echo=T}
-# Plot histogram of 2014
+# Histogram: left-skewed as normal
 chart.Histogram(sp500_returns, methods = c("add.density","add.normal"))
+
+# Skewness and Kurtosis
+skewness(sp500_returns)
+kurtosis(sp500_returns)
+
+# SemiDeviation
+SemiDeviation(sp500_returns)
+
+# Calculate the value at risk: 5% and 2.5% 
+VaR(sp500_returns,0.05)
+VaR(sp500_returns,0.025)
+
+# Calculate the expected shortfall: 5% and 2.5% 
+ES(sp500_returns,0.05)
+ES(sp500_returns,0.025)
+```
+# Peak-to-trough decline in cumulative returns analysis through portfolio's drawdowns analysis 
+```{r drawdowns, echo=T}
+table.Drawdowns(sp500_returns)
+chart.Drawdown(sp500_returns)
+```
+# A Case of a 2 Assets Portfolio (SP500 and TBill)
+```{r correlation analysis, echo=T}
+grid <- seq(from = 0, to = 1, by = 0.01) 
+vsharpe <- rep(NA, times = length(grid)) # Empty vector for Sharpe ratios
+
+# Sharpe ratios by weights
+for(i in 1:length(grid)) {
+    weight <- grid[i]
+    preturns <- weight * sp500_returns + (1 - weight) * rf_weekly_close
+    vsharpe[i] <- SharpeRatio.annualized(preturns)
+}
+# Plot weights and Sharpe ratio
+plot(grid, vsharpe, xlab = "Weights", ylab= "Ann. Sharpe ratio")
+abline(v = grid[vsharpe == max(vsharpe)], lty = 3)
+
+# Create a scatter plot
+chart.Scatter(rf_weekly_close, sp500_returns, xlab = "TBill returns", ylab = "SP500 returns", main = "Risk-free vs SP500 returns")
+
+# Merge returns_bonds and returns_equities 
+returns <- merge(rf_weekly_close, sp500_returns)
+
+# Correlation
+cor(rf_weekly_close, sp500_returns)
+chart.Correlation(returns)
+
+# Rolling estimates 
+chart.RollingCorrelation(rf_weekly_close, sp500_returns,  width = 12)
 ```

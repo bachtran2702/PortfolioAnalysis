@@ -1,0 +1,62 @@
+---
+title: "Portfolios of 10 Assets"
+author: "Bach Tran"
+date: "2025-04-02"
+output: html_document
+---
+
+```{r setup}
+library(dplyr)
+library(PerformanceAnalytics)
+library(xts)
+library(quantmod)
+library(ggplot2)
+```
+
+## R Markdown
+
+# Importing SP500 and 3-Month Treasury Bill Secondary Market Rate
+
+```{r importing data}
+#sp500
+getSymbols("^SPX", src = "yahoo")
+sp500 = SPX["2020/2025-03"]
+#risk-free
+getSymbols("DTB3", src = "FRED")
+rf = DTB3["2020/2025-03"]
+
+# To weekly frequency from daily
+sp500_weekly = to.weekly(sp500)
+head(sp500_weekly, n =6)
+
+rf_weekly = to.weekly(rf)
+rf_weekly_close = rf_weekly[,4]/100
+rf_weekly_close = rf_weekly_close[-1,]
+
+# sp500_returns using adj.close
+sp500_returns = Return.calculate(sp500_weekly[,6])
+sp500_returns = sp500_returns[-1,]
+plot.zoo(sp500_returns)
+
+# Returns table
+table.CalendarReturns(sp500_returns)
+
+# Arith mean of returns
+mean(sp500_returns)
+
+# Geometric mean of returns
+mean.geometric(sp500_returns)
+
+# Standard deviation
+sd(sp500_returns)
+
+```
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.

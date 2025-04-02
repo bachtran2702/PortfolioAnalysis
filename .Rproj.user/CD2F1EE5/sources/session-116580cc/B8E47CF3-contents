@@ -1,5 +1,5 @@
 ---
-title: "Portfolio Analysis Test"
+title: "Portfolio of 2 Assets"
 author: "Bach Tran"
 date: "2025-04-02"
 output: html_document
@@ -13,7 +13,7 @@ library(quantmod)
 library(ggplot2)
 ```
 
-## Importing SP500 and 3Month Daily T-Bill data on the Secondary Market 
+# Importing SP500 and 3-Month Treasury Bill Secondary Market Rate
 
 ```{r importing data}
 #sp500
@@ -50,7 +50,7 @@ sd(sp500_returns)
 
 ```
 
-## Excess Return and Sharpe Ratio
+# Excess Return and Sharpe Ratio
 
 ```{r sharpe, echo=T}
 # Excess portfolio returns 
@@ -63,7 +63,7 @@ mean(sp500_returns)
 sharpe_ratio <- mean(r_excess) / sd(sp500_returns)
 print(sharpe_ratio)
 ```
-## Annualized mean and volatility as per norm
+# Annualized mean and volatility as per norm
 
 ```{r annualized, echo=T}
 rf_annualized = (1+ rf_weekly_close)^52 -1
@@ -77,7 +77,7 @@ chart.RollingPerformance(R = sp500_returns, width = 12, FUN = "Return.annualized
 chart.RollingPerformance(R = sp500_returns, width = 12, FUN = "StdDev.annualized")
 chart.RollingPerformance(R = sp500_returns, width = 12, FUN = "SharpeRatio.annualized", Rf = Rf)
 ```
-## Returns Histogram, Distributions and Risk Analysis: 
+# Returns Histogram, Distributions and Risk Analysis: 
 ```{r histogram, echo=T}
 # Histogram: left-skewed as normal
 chart.Histogram(sp500_returns, methods = c("add.density","add.normal"))
@@ -97,13 +97,13 @@ VaR(sp500_returns,0.025)
 ES(sp500_returns,0.05)
 ES(sp500_returns,0.025)
 ```
-## Peak-to-trough decline in cumulative returns analysis through portfolio's drawdowns analysis 
+# Peak-to-trough decline in cumulative returns analysis through portfolio's drawdowns analysis 
 ```{r drawdowns, echo=T}
 table.Drawdowns(sp500_returns)
 chart.Drawdown(sp500_returns)
 ```
-## A Case of a 2 Assets Portfolio (SP500 and TBill)
-```{r drawdowns, echo=T}
+# A Case of a 2 Assets Portfolio (SP500 and TBill)
+```{r correlation analysis, echo=T}
 grid <- seq(from = 0, to = 1, by = 0.01) 
 vsharpe <- rep(NA, times = length(grid)) # Empty vector for Sharpe ratios
 
