@@ -1,2 +1,0 @@
-"0","# Plot histogram of 2014"
-"0","chart.Histogram(sp500_returns, methods = c(""add.density"",""add.normal""), title = ""returns"")"
