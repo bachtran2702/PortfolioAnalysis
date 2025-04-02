@@ -1,0 +1,2 @@
+"0","rf_annualized = (1+ rf_weekly_close)^52 -1"
+"0","plot(rf_annualized)"

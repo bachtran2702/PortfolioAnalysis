@@ -5,7 +5,7 @@ date: "2025-04-02"
 output: html_document
 ---
 
-```{r setup, include=FALSE}
+```{r setup}
 library(dplyr)
 library(PerformanceAnalytics)
 library(xts)
@@ -13,31 +13,36 @@ library(quantmod)
 library(ggplot2)
 ```
 
-## R Markdown
+## Importing SP500 and 3Month Daily T-Bill data on the Secondary Market 
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
-
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-```{r cars}
+```{r importing data}
+#sp500
 getSymbols("^SPX", src = "yahoo")
 sp500 = SPX["2020/2025-03"]
+#risk-free
+getSymbols("DTB3", src = "FRED")
+rf = DTB3["2020/2025-03"]
 
-# To monthly frequency from daily
-sp500_monthly <- to.monthly(sp500)
-head(sp500_monthly, n =6)
+# To weekly frequency from daily
+sp500_weekly = to.weekly(sp500)
+head(sp500_weekly, n =6)
+
+rf_weekly = to.weekly(rf)
+rf_weekly_close = rf_weekly[,4]/100
+rf_weekly_close = rf_weekly_close[-1,]
 
 # sp500_returns using adj.close
-sp500_returns <- Return.calculate(sp500_monthly[,6])
+sp500_returns = Return.calculate(sp500_weekly[,6])
+sp500_returns = sp500_returns[-1,]
 plot.zoo(sp500_returns)
 
 # Returns table
 table.CalendarReturns(sp500_returns)
 
-# Arith mean monthly returns
+# Arith mean of returns
 mean(sp500_returns)
 
-# Geometric mean monthly returns
+# Geometric mean of returns
 mean.geometric(sp500_returns)
 
 # Standard deviation
@@ -45,12 +50,23 @@ sd(sp500_returns)
 
 ```
 
-## Including Plots
+## Excess Return and Sharpe Ratio
 
-You can also embed plots, for example:
+```{r sharpe, echo=FALSE}
+# Excess portfolio returns 
+r_excess = sp500_returns - rf_weekly_close
+# Compare the mean of sp500_excess and sp500_returns 
+mean(r_excess)
+mean(sp500_returns)
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+# Compute the Sharpe ratio
+sharpe_ratio <- mean(r_excess) / sd(sp500_returns)
+print(sharpe_ratio)
 ```
+## Annualized mean and volatility as per norm
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+```{r annualized, echo=FALSE}
+rf_annualized = (1+ rf_weekly_close)^52 -1
+plot(rf_annualized)
+table.AnnualizedReturns(sp500_returns, Rf = rf_weekly_close/100)
+```
