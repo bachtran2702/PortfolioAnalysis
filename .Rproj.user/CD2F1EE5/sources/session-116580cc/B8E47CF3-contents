@@ -102,3 +102,31 @@ ES(sp500_returns,0.025)
 table.Drawdowns(sp500_returns)
 chart.Drawdown(sp500_returns)
 ```
+## A Case of a 2 Assets Portfolio (SP500 and TBill)
+```{r drawdowns, echo=T}
+grid <- seq(from = 0, to = 1, by = 0.01) 
+vsharpe <- rep(NA, times = length(grid)) # Empty vector for Sharpe ratios
+
+# Sharpe ratios by weights
+for(i in 1:length(grid)) {
+    weight <- grid[i]
+    preturns <- weight * sp500_returns + (1 - weight) * rf_weekly_close
+    vsharpe[i] <- SharpeRatio.annualized(preturns)
+}
+# Plot weights and Sharpe ratio
+plot(grid, vsharpe, xlab = "Weights", ylab= "Ann. Sharpe ratio")
+abline(v = grid[vsharpe == max(vsharpe)], lty = 3)
+
+# Create a scatter plot
+chart.Scatter(rf_weekly_close, sp500_returns, xlab = "TBill returns", ylab = "SP500 returns", main = "Risk-free vs SP500 returns")
+
+# Merge returns_bonds and returns_equities 
+returns <- merge(rf_weekly_close, sp500_returns)
+
+# Correlation
+cor(rf_weekly_close, sp500_returns)
+chart.Correlation(returns)
+
+# Rolling estimates 
+chart.RollingCorrelation(rf_weekly_close, sp500_returns,  width = 12)
+```
