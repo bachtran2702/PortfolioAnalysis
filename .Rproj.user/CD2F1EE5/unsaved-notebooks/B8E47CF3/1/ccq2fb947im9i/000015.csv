@@ -1,0 +1,5 @@
+"0","sp500 = getSymbols(""^SPX"", src = ""Yahoo"")
+"
+"2","Error in getSymbols.Yahoo(Symbols = ""^SPX"", env = <environment>, verbose = FALSE,  : 
+  could not find function ""getSymbols.Yahoo""
+"
