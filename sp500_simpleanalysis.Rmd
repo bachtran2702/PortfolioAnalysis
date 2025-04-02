@@ -77,7 +77,7 @@ chart.RollingPerformance(R = sp500_returns, width = 12, FUN = "Return.annualized
 chart.RollingPerformance(R = sp500_returns, width = 12, FUN = "StdDev.annualized")
 chart.RollingPerformance(R = sp500_returns, width = 12, FUN = "SharpeRatio.annualized", Rf = Rf)
 ```
-## Returns Histogram: left-skewed as normal
+## Returns Histogram: interesting left-skewed instead of the expected right skewed
 ```{r histogram, echo=T}
 # Plot histogram of 2014
 chart.Histogram(sp500_returns, methods = c("add.density","add.normal"))
