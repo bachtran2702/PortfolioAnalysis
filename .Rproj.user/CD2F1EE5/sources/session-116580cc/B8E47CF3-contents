@@ -68,5 +68,12 @@ print(sharpe_ratio)
 ```{r annualized, echo=FALSE}
 rf_annualized = (1+ rf_weekly_close)^52 -1
 plot(rf_annualized)
-table.AnnualizedReturns(sp500_returns, Rf = rf_weekly_close/100)
+Rf = rf_weekly_close/100
+table.AnnualizedReturns(sp500_returns, Rf = Rf)
+
+# 12-month rolling: 
+# Annualized mean, annualized standard deviation, annualized Sharpe ratio
+chart.RollingPerformance(R = sp500_returns, width = 12, FUN = "Return.annualized")
+chart.RollingPerformance(R = sp500_returns, width = 12, FUN = "StdDev.annualized")
+chart.RollingPerformance(R = sp500_returns, width = 12, FUN = "SharpeRatio.annualized", Rf = Rf)
 ```
