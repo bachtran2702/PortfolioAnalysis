@@ -23,28 +23,24 @@ When you click the **Knit** button a document will be generated that includes bo
 getSymbols("^SPX", src = "yahoo")
 sp500 = SPX["2020/2025-03"]
 
-# Convert the daily frequency of sp500 to monthly frequency: sp500_monthly
+# To monthly frequency from daily
 sp500_monthly <- to.monthly(sp500)
-
-# Print the first six rows of sp500_monthly
 head(sp500_monthly, n =6)
 
-# Create sp500_returns using Return.calculate using the closing prices
+# sp500_returns using adj.close
 sp500_returns <- Return.calculate(sp500_monthly[,6])
-
-# Time series plot
 plot.zoo(sp500_returns)
 
-# Produce the year x month table
+# Returns table
 table.CalendarReturns(sp500_returns)
 
-# Compute the mean monthly returns
+# Arith mean monthly returns
 mean(sp500_returns)
 
-# Compute the geometric mean of monthly returns
+# Geometric mean monthly returns
 mean.geometric(sp500_returns)
 
-# Compute the standard deviation
+# Standard deviation
 sd(sp500_returns)
 
 ```
