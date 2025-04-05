@@ -6,6 +6,8 @@
 "0","library(ggplot2)"
 "0","library(lubridate)"
 "0","library(dygraphs)"
+"0","library(jsonlite)"
+"0","library(htmltools)"
 "0",""
 "0","#theme of the graphs"
 "0","theme_project = chartTheme(""white"", bg.collbackground =""transparent"")"

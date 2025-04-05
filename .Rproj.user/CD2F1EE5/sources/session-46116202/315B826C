@@ -3,9 +3,9 @@
     "path": "~/GitHub/port_management/SP500_data.Rmd",
     "project_path": null,
     "type": "r_markdown",
-    "hash": "0",
+    "hash": "2919974527",
     "contents": "",
-    "dirty": true,
+    "dirty": false,
     "created": 1743860600283.0,
     "source_on_save": false,
     "relative_order": 7,
@@ -17,11 +17,11 @@
         "last_setup_crc32": "46116202bfd0dac3"
     },
     "folds": "",
-    "lastKnownWriteTime": 1743860875,
+    "lastKnownWriteTime": 1743862678,
     "encoding": "UTF-8",
     "collab_server": "",
     "source_window": "",
-    "last_content_update": 1743862461351,
+    "last_content_update": 1743862678684,
     "read_only": false,
     "read_only_alternatives": []
 }
