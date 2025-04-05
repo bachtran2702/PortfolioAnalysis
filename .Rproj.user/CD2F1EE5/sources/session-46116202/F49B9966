@@ -1,0 +1,28 @@
+{
+    "id": "F49B9966",
+    "path": "~/GitHub/PortfolioAnalysis/SP500_data.Rmd",
+    "project_path": "SP500_data.Rmd",
+    "type": "r_markdown",
+    "hash": "0",
+    "contents": "",
+    "dirty": false,
+    "created": 1743857590556.0,
+    "source_on_save": false,
+    "relative_order": 7,
+    "properties": {
+        "tempName": "Untitled1",
+        "source_window_id": "",
+        "Source": "Source",
+        "cursorPosition": "47,0",
+        "scrollLine": "20",
+        "last_setup_crc32": "46116202207837e"
+    },
+    "folds": "",
+    "lastKnownWriteTime": 1743858026,
+    "encoding": "UTF-8",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1743858026564,
+    "read_only": false,
+    "read_only_alternatives": []
+}
