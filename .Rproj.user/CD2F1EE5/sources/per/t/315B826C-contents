@@ -7,6 +7,8 @@ library(quantmod)
 library(ggplot2)
 library(lubridate)
 library(dygraphs)
+library(jsonlite)
+library(htmltools)
 
 #theme of the graphs
 theme_project = chartTheme("white", bg.collbackground ="transparent")
@@ -34,8 +36,7 @@ p = dygraph(SPX_dy, xlab = "Date", ylab = "Price") %>%
   dyRangeSelector() %>%
   dyCandlestick()%>%
   dyCrosshair(direction = "vertical") %>%
-  dyHighlight(highlightCircleSize = 3, highlightSeriesBackgroundAlpha = 0.2, hideOnMouseOut = T)  %>%
-  dyRoller(rollPeriod = 1)
+  dyHighlight(highlightCircleSize = 3, highlightSeriesBackgroundAlpha = 0.2, hideOnMouseOut = T)
 p
 
 #Bollinger Bands Data frame
@@ -55,11 +56,13 @@ q = dygraph(SPX_dya, xlab = "Date", ylab = "Price") %>%
 q
 ```
 
-```{r, fig.width=4, fig.height=1,background: transparent, message = FALSE, results = 'hide', warning=F, echo = F}
+```{r, fig.width=6, fig.height=1,background: transparent, message = FALSE, results = 'hide', warning=F, echo = F}
 # create a list of dygraphs objects
 plotobj <- list(p,q)
 
 # render the dygraphs objects using htmltools
 htmltools::browsable(htmltools::tagList(plotobj))
+
+save_html(plotobj, "SPdata.html")
 ```
 

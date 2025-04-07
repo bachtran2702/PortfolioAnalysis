@@ -1,2 +1,5 @@
+"0","# create a list of dygraphs objects"
+"0","plotobj <- list(p,q)"
 "0",""
-"0","save_html(plotobj, ""SP data"")"
+"0","# render the dygraphs objects using htmltools"
+"0","htmltools::browsable(htmltools::tagList(plotobj))"
