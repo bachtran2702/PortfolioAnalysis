@@ -1,4 +1,0 @@
-"0",""
-"0","# 12-month rolling: "
-"0","# Annualized mean, annualized standard deviation, annualized Sharpe ratio"
-"0","chart.RollingPerformance(R = sp500_returns, width = 12, FUN = ""Return.annualized"")"

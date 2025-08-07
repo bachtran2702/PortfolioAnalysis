@@ -1,2 +1,0 @@
-"0","# Histogram: left-skewed as normal"
-"0","chart.Histogram(sp500_returns, methods = c(""add.density"",""add.normal""))"

@@ -1,3 +1,0 @@
-"0",""
-"0","# Rolling estimates "
-"0","chart.RollingCorrelation(rf_weekly_close, sp500_returns,  width = 12)"

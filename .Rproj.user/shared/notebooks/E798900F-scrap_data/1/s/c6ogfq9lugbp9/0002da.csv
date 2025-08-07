@@ -1,6 +1,0 @@
-"0",""
-"0",""
-"0","# sp500_returns using adj.close"
-"0","sp500_returns = Return.calculate(sp500_weekly[,6])"
-"0","sp500_returns = sp500_returns[-1,]"
-"0","plot.zoo(sp500_returns)"

@@ -1,3 +1,0 @@
-"0",""
-"0","# Create a scatter plot"
-"0","chart.Scatter(rf_weekly_close, sp500_returns, xlab = ""TBill returns"", ylab = ""SP500 returns"", main = ""Risk-free vs SP500 returns"")"
