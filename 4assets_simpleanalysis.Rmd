@@ -8,59 +8,110 @@ output: html_document
 ```{r setup, warning = FALSE, message = FALSE}
 library(dplyr)
 library(PerformanceAnalytics)
+library(PortfolioAnalytics)
 library(xts)
 library(quantmod)
 library(ggplot2)
+library(Rglpk)
 ```
 
-## R Markdown
-
-# Importing SP500 and 3-Month Treasury Bill Secondary Market Rate
+## Importing S&P 500, KOSPI, STI, STOXX600 and 3-Month Treasury Bill Secondary Market Rate
 
 ```{r importing data, warning = FALSE, message = FALSE}
 #sp500
 getSymbols("^SPX", src = "yahoo")
-sp500 = SPX["2020/2025-03"]
+sp500 = SPX["2020/2025-08"]
 
-#Hang Seng Index
-HSI = getSymbols("HSI", src = "yahoo")
-  qVNI = HSI["2020/2025-03"]
+#KOSPI Composite Index
+getSymbols("^KS11", src = "yahoo")
+KOSPI = KS11["2020/2025-08"]
 
-#STI
+#Hang seng Index
+getSymbols("^HSI", src = "yahoo")
+HSI = HSI["2020/2025-08"]
+
+#Straits Times Index 
 getSymbols("^STI", src = "yahoo")
-STI = STI["2020/2025-03"]
+STI = STI["2020/2025-08"]
 
 #STOXX 600
 getSymbols("^STOXX", src = "yahoo")
-STOXX = STOXX["2020/2025-03"]
+STOXX = STOXX["2020/2025-08"]
 
 #risk-free
 getSymbols("DTB3", src = "FRED")
-rf = DTB3["2020/2025-03"]
+rf = DTB3["2020/2025-08"]
+```
 
-# To weekly frequency from daily
-sp500_weekly = to.weekly(sp500)
-head(sp500_weekly, n =6)
+```{r clean data, warning = FALSE, message = FALSE}
+#create a function to subset and aggerate data
 
+get_weekly_retun_data = function(data) {
+  weeklydata = to.weekly(data)
+  returns = Return.calculate(weeklydata[,6])[-1,]
+}
+
+# Calculating returns using adj.close and merge into a data set
+sp500_r = get_weekly_retun_data(sp500)
+HSI_r = get_weekly_retun_data(HSI)
+STI_r = get_weekly_retun_data(STI)
+KOSPI_r = get_weekly_retun_data(KOSPI)
+sTOXX_r= get_weekly_retun_data(STOXX)
+
+index_returns= merge.xts(sp500_r, HSI_r, KOSPI_r, STI_r, sTOXX_r, fill = na.locf)%>%
+  align.time()
+names(index_returns) = c("SPX", "HSI", "KOSPI", "STI", "STOXX")
+  
+#risk-free rate
 rf_weekly = to.weekly(rf)
 rf_weekly_close = rf_weekly[,4]/100
 rf_weekly_close = rf_weekly_close[-1,]
 
-# sp500_returns using adj.close
-sp500_returns = Return.calculate(sp500_weekly[,6])
-sp500_returns = sp500_returns[-1,]
-plot.zoo(sp500_returns)
+```
 
-# Returns table
-table.CalendarReturns(sp500_returns)
 
-# Arith mean of returns
-mean(sp500_returns)
+```{r plot returns, warning = FALSE, message = FALSE}
+autoplot(index_returns) + labs(x = "weekly", y ="returns (%)", title="Weekly")
+```
 
-# Geometric mean of returns
-mean.geometric(sp500_returns)
+```{r simple portfolio optimization using simulation, warning = FALSE, message = FALSE}
 
-# Standard deviation
-sd(sp500_returns)
+# Portfolio specification object using asset_names
+port_spec_base = portfolio.spec(assets = colnames(index_returns))%>%
+  add.objective(portfolio = port_spec_base, type = "return", name = "mean") %>%
+  add.objective(type="risk_budget", name="ETL",
+# Expected tail loss with a confidence level  0.95;  not asset can contribute more than 21% to total portfolio risk.
+                arguments=list(p=0.95), max_prisk=0.21, enabled=FALSE)%>%
+  add.constraint(type="leverage",min_sum=0.99, max_sum=1.01) %>%
+  add.constraint(type="box", min=0, max=1)
+```
+
+```{r port simulation, warning = FALSE, message = FALSE}
+base_port_1 = port_spec_base  %>% 
+  random_portfolios(portfolio=., permutations=5000, rp_method='sample')
+base_port_2 = port_spec_base %>%
+  random_portfolios(portfolio=., permutations=5000, rp_method='simplex')
+base_port_3 = port_spec_base %>%
+  random_portfolios(portfolio=., permutations=5000, rp_method='grid')%>%
+  `colnames<-`(colnames(base_port_1))
+
+#risk returns of each simulation
+
+#combine all portfolio
+base_simulation <- list("sample"=as_tibble(base_port_1), "simplex"=as_tibble(base_port_2),
+            "grid"=as_tibble(base_port_3)) %>% bind_rows(.id="Method")
+
+
+#simulation performance
+opt.outputMvo(base_port_1,
+              index_returns,
+              digits = NULL,
+              annualize = TRUE,
+              frequency = "weekly",
+              rf = rf_weekly)
+
 
 ```
+::: {style="color: red"}
+to be continued
+:::
