@@ -15,7 +15,7 @@ library(ggplot2)
 library(Rglpk)
 ```
 
-## Importing S&P 500, KOSPI, STI, STOXX600 and 3-Month Treasury Bill Secondary Market Rate
+#### Importing S&P 500, KOSPI, STI, STOXX600 and 3-Month Treasury Bill Secondary Market Rate
 
 ```{r importing data, warning = FALSE, message = FALSE}
 #sp500
@@ -95,7 +95,7 @@ base_port_1_mu = applyFUN(index_returns
 base_port_1_sigma = applyFUN(index_returns
                           , base_port_1, "StdDev", list())
 
-chart.Scatter(base_port_1_sigma, base_port_1_mu, main = "mu-sigma of simulation using sample method")
+chart.Scatter(base_port_1_sigma, base_port_1_mu, main = "mu-sigma of simulation using sample method", col = "#23CE6B")
 ```
 ```{r mu-sigma simplex, warning = FALSE, message = FALSE}
 base_port_2 = port_spec_base %>%
@@ -104,7 +104,8 @@ base_port_2_mu = applyFUN(index_returns
                           , base_port_2, "mean", list())
 base_port_2_sigma = applyFUN(index_returns
                           , base_port_2, "StdDev", list())
-chart.Scatter(base_port_2_sigma, base_port_2_mu, main = "mu-sigma of simulation using simplex method")
+chart.Scatter(base_port_2_sigma, base_port_2_mu, main = "mu-sigma of simulation using simplex method", col = "#FF8811")
+
 ```
 ```{r mu-sigma grid, warning = FALSE, message = FALSE}
 base_port_3 = port_spec_base %>%
@@ -114,13 +115,40 @@ base_port_3_mu = applyFUN(index_returns
                           , base_port_3, "mean", list())
 base_port_3_sigma = applyFUN(index_returns
                           , base_port_3, "StdDev", list())
-chart.Scatter(base_port_3_sigma, base_port_3_mu, main = "mu-sigma of simulation using grid method")
+chart.Scatter(base_port_3_sigma, base_port_3_mu, main = "mu-sigma of simulation using grid method", col = "purple4")
 
 
-
-base_simulation <- list("sample"=as_tibble(base_port_3), "simplex"=as_tibble(base_port_2),
-            "grid"=as_tibble(base_port_3)) %>% bind_rows(.id="Method")
 ```
+```{r mu-sigma all 3 simulation, warning = FALSE, message = FALSE}
+#added "theme" for ggplot graph for consistency
+theme = theme(panel.grid.major = element_blank(), #graph element
+          panel.grid.minor = element_blank(),
+          panel.background = element_blank(),
+          plot.background = element_blank(), 
+          axis.line = element_line(colour = "black")) +
+        theme(text=element_text(size=15),
+             (legend.position="bottom"),
+              legend.background = element_blank(),
+              legend.box.background = element_rect(colour = "black")) #I split the function into two for readability
+
+#I switched to ggplot fort simplicity 
+ggplot() +
+  xlab("σ")+
+  ylab("μ")+
+  labs(title = "mu-sigma",
+       subtitle = "all simulated portfolios",
+       fill = "Method") +
+  geom_point(data = NULL, aes(base_port_3_sigma,base_port_3_mu, fill = "Grid"),  color = "purple4", alpha = 1) +
+  geom_point(data = NULL, aes(base_port_1_sigma,base_port_1_mu, fill = "Sample"),  color = "#23CE6B", alpha = .4) +
+  geom_point(data = NULL, aes(base_port_2_sigma,base_port_2_mu, fill = "Simplex"),  color = "#FF8811", alpha = .3) +
+  theme
+
+  
+
+
+```
+
+
 ::: {style="color: red"}
 to be continued
 :::
