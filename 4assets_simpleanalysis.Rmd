@@ -12,7 +12,11 @@ library(PortfolioAnalytics)
 library(xts)
 library(quantmod)
 library(ggplot2)
-library(Rglpk)
+
+#solver tools
+library(ROI)
+library(ROI.plugin.glpk)
+library(ROI.plugin.quadprog)
 ```
 
 #### Importing S&P 500, KOSPI, STI, STOXX600 and 3-Month Treasury Bill Secondary Market Rate
@@ -142,12 +146,26 @@ ggplot() +
   geom_point(data = NULL, aes(base_port_1_sigma,base_port_1_mu, fill = "Sample"),  color = "#23CE6B", alpha = .4) +
   geom_point(data = NULL, aes(base_port_2_sigma,base_port_2_mu, fill = "Simplex"),  color = "#FF8811", alpha = .3) +
   theme
+```
+```{r portfolio specs, warning = FALSE, message = FALSE}
+# Portfolio specification
+port_spec = portfolio.spec(colnames(index_returns))
+port_spec = add.constraint(portfolio = port_spec, type = "full_investment") # weights sum to 1
+port_spec = add.constraint(portfolio = port_spec, type = "long_only") # no short
+port_spec = add.objective(portfolio = port_spec, type="risk_budget", name="ETL",
+                arguments=list(p=0.95), max_prisk=0.60, enabled=FALSE)# Expected tail loss with a confidence level  0.95;  not asset can contribute more than 60% to total portfolio risk.
+port_spec = add.objective(portfolio = port_spec, type = "risk", name = "StdDev") # minimize portfolio std
+```
+```{r portfolio, warning = FALSE, message = FALSE}
+# Optimized portfolio
+portolio_1 <- optimize.portfolio(index_returns, portfolio = port_spec, optimize_method = "ROI")
+print(portolio_1)
 
-  
+extractWeights(portolio_1) # optimal weights
+chart.Weights(portolio_1)
 
 
 ```
-
 
 ::: {style="color: red"}
 to be continued
