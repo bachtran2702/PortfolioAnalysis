@@ -1,5 +1,5 @@
 ---
-title: "Portfolios of 4 Assets"
+title: "Portfolios of 5 Assets"
 author: "Bach Tran"
 date: "2025-04-02"
 output: html_document
@@ -80,28 +80,46 @@ port_spec_base = portfolio.spec(assets = colnames(index_returns))
 
 port_spec_base =   add.objective(portfolio = port_spec_base, type = "return", name = "mean") %>%
   add.objective(type="risk_budget", name="ETL",
-# Expected tail loss with a confidence level  0.95;  not asset can contribute more than 21% to total portfolio risk.
-                arguments=list(p=0.95), max_prisk=0.21, enabled=FALSE)%>%
+# Expected tail loss with a confidence level  0.95;  not asset can contribute more than 60% to total portfolio risk.
+                arguments=list(p=0.95), max_prisk=0.60, enabled=FALSE)%>%
   add.constraint(type="leverage",min_sum=0.99, max_sum=1.01) %>%
   add.constraint(type="box", min=0, max=1)
 ```
 
-```{r port simulation, warning = FALSE, message = FALSE}
+```{r mu-sigma, warning = FALSE, message = FALSE}
+#risk returns of using sample methods
 base_port_1 = port_spec_base  %>% 
   random_portfolios(portfolio=., permutations=5000, rp_method='sample')
+base_port_1_mu = applyFUN(index_returns
+                          , base_port_1, "mean", list())
+base_port_1_sigma = applyFUN(index_returns
+                          , base_port_1, "StdDev", list())
+
+chart.Scatter(base_port_1_sigma, base_port_1_mu, main = "mu-sigma of simulation using sample method")
+```
+```{r mu-sigma simplex, warning = FALSE, message = FALSE}
 base_port_2 = port_spec_base %>%
   random_portfolios(portfolio=., permutations=5000, rp_method='simplex')
+base_port_2_mu = applyFUN(index_returns
+                          , base_port_2, "mean", list())
+base_port_2_sigma = applyFUN(index_returns
+                          , base_port_2, "StdDev", list())
+chart.Scatter(base_port_2_sigma, base_port_2_mu, main = "mu-sigma of simulation using simplex method")
+```
+```{r mu-sigma grid, warning = FALSE, message = FALSE}
 base_port_3 = port_spec_base %>%
   random_portfolios(portfolio=., permutations=5000, rp_method='grid')%>%
   `colnames<-`(colnames(base_port_1))
+base_port_3_mu = applyFUN(index_returns
+                          , base_port_3, "mean", list())
+base_port_3_sigma = applyFUN(index_returns
+                          , base_port_3, "StdDev", list())
+chart.Scatter(base_port_3_sigma, base_port_3_mu, main = "mu-sigma of simulation using grid method")
 
-#risk returns of each simulation
 
-#combine all portfolio
-base_simulation <- list("sample"=as_tibble(base_port_1), "simplex"=as_tibble(base_port_2),
+
+base_simulation <- list("sample"=as_tibble(base_port_3), "simplex"=as_tibble(base_port_2),
             "grid"=as_tibble(base_port_3)) %>% bind_rows(.id="Method")
-
-
 ```
 ::: {style="color: red"}
 to be continued
