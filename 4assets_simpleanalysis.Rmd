@@ -5,7 +5,7 @@ date: "2025-04-02"
 output: html_document
 ---
 
-```{r setup}
+```{r setup, warning = FALSE, message = FALSE}
 library(dplyr)
 library(PerformanceAnalytics)
 library(xts)
@@ -17,14 +17,14 @@ library(ggplot2)
 
 # Importing SP500 and 3-Month Treasury Bill Secondary Market Rate
 
-```{r importing data}
+```{r importing data, warning = FALSE, message = FALSE}
 #sp500
 getSymbols("^SPX", src = "yahoo")
 sp500 = SPX["2020/2025-03"]
 
 #Hang Seng Index
 HSI = getSymbols("HSI", src = "yahoo")
-  qVNI = VNIndex["2020/2025-03"]
+  qVNI = HSI["2020/2025-03"]
 
 #STI
 getSymbols("^STI", src = "yahoo")
