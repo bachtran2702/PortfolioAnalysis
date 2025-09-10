@@ -1,5 +1,5 @@
 ---
-title: "Portfolio of 2 Assets"
+title: "Portfolio of 1 Asset"
 author: "Bach Tran"
 date: "2025-04-02"
 output: html_document
