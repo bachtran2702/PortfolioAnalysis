@@ -43,8 +43,8 @@ getSymbols("^STOXX", src = "yahoo")
 STOXX = STOXX["2020/2025-08"]
 
 #risk-free
-getSymbols("DTB3", src = "FRED")
-rf = DTB3["2020/2025-08"]
+getSymbols("WTB3MS", src = "FRED")
+rf =  WTB3MS["2020/2025-08"]
 ```
 
 ```{r clean data, warning = FALSE, message = FALSE}
@@ -67,8 +67,7 @@ index_returns= merge.xts(sp500_r, HSI_r, KOSPI_r, STI_r, sTOXX_r, fill = na.locf
 names(index_returns) = c("SPX", "HSI", "KOSPI", "STI", "STOXX")
   
 #risk-free rate
-rf_weekly = to.weekly(rf)
-rf_weekly_close = rf_weekly[,4]/100/52
+rf_weekly_close = (1 + rf/100)^(1/52) - 1
 rf_weekly_close = rf_weekly_close[-1,]
 
 ```
